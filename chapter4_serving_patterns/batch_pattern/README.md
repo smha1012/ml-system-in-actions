@@ -1,29 +1,29 @@
-# batch pattern
+# 배치 추론 패턴
 
-## 目的
+## 목적
 
-バッチで推論を実行
+배치로 추론을 실행
 
-## 前提
+## 전제
 
-- Python 3.8 以上
+- Python 3.8 이상
 - Docker
 - Docker compose
 
-## 使い方
+## 사용법
 
-0. カレントディレクトリ
+0. 현재 디렉토리
 
 ```sh
 $ pwd
 ~/ml-system-in-actions/chapter4_serving_patterns/batch_pattern
 ```
 
-1. Docker イメージをビルド
+1. Docker 이미지 빌드
 
 ```sh
 $ make build_all
-# 実行されるコマンド
+# 실행 커맨드
 # docker build \
 #     -t shibui/ml-system-in-actions:batch_pattern_api_0.0.1 \
 #     -f Dockerfile.api \
@@ -34,21 +34,21 @@ $ make build_all
 #     .
 ```
 
-2. Docker compose で各サービスを起動
+2. Docker compose 로 각 서비스 기동
 
 ```sh
 $ make c_up
-# 実行されるコマンド
+# 실행 커맨드
 # docker-compose \
 #     -f ./docker-compose.yml \
 #     up -d
 ```
 
-3. 起動したバッチシステムを確認
+3. 기동한 배치 시스템 확인
 
 ```sh
 $ docker ps -a
-# 出力
+# 출력
 # CONTAINER ID   IMAGE                                                   COMMAND                  CREATED          STATUS          PORTS                               NAMES
 # 08ca4db52176   shibui/ml-system-in-actions:batch_pattern_api_0.0.1     "./run.sh"               15 seconds ago   Up 14 seconds   0.0.0.0:8000->8000/tcp              api
 # ab5f46b1e866   shibui/ml-system-in-actions:batch_pattern_batch_0.0.1   "python -m src.task.…"   15 seconds ago   Up 14 seconds                                       job
@@ -56,7 +56,7 @@ $ docker ps -a
 
 
 $ docker logs job -f
-# 出力
+# 출력
 # 2021-01-30 12:41:52,739     INFO waiting for batch to start
 # 2021-01-30 12:42:52,689     INFO starting batch
 # 2021-01-30 12:42:52,795     INFO predict data size: 4000
@@ -70,11 +70,11 @@ $ docker logs job -f
 # 2021-01-30 12:42:52,808    DEBUG prediction log: 4009 [6, 3.9, 5.3, 5.7] [0.35905859 0.25630024 0.3846412 ]
 ```
 
-4. Docker compose を停止
+4. Docker compose 정지
 
 ```sh
 $ make c_down
-# 実行されるコマンド
+# 실행 커맨드
 # docker-compose \
 #     -f ./docker-compose.yml \
 #     down

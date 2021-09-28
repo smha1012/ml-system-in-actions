@@ -1,36 +1,36 @@
-# circuit breaker pattern
+# 추론 서킷브레이커 패턴
 
-## 目的
+## 목적
 
-サーキットブレーカーによって高負荷に対処します。
+서킷브레이커로 고부하에 대처합니다.
 
-## 前提
+## 전제
 
-- Python 3.8 以上
+- Python 3.8 이상
 - Docker
-- Kubernetes クラスターまたは minikube
+- Kubernetes 클러스터 또는 minikube
 
-本プログラムでは Kubernetes クラスターまたは minikube が必要になります。
-Kubernetes クラスターは独自に構築するか、各クラウドのマネージドサービス（GCP GKE、AWS EKS、MS Azure AKS 等）をご利用ください。
-なお、作者は GCP GKE クラスターで稼働確認を取っております。
+이 프로그램은 Kubernetes 클러스터 또는 minikube 가 필요합니다.
+Kubernetes 클러스터는 독자적으로 구축하거나, 각 클라우드 매니지드 서비스（GCP GKE、AWS EKS、MS Azure AKS 等）를 이용해 주십시오.
+GCP GKE 클러스터로 가동을 확인했습니다.
 
-- [Kubernetes クラスター構築](https://kubernetes.io/ja/docs/setup/)
+- [Kubernetes 클러스터 구축](https://kubernetes.io/ja/docs/setup/)
 - [minikube](https://kubernetes.io/ja/docs/setup/learning-environment/minikube/)
 
-## 使い方
+## 사용법
 
-0. カレントディレクトリ
+0. 현재 디렉토리
 
 ```sh
 $ pwd
 ~/ml-system-in-actions/chapter6_operation_management/circuit_breaker_pattern
 ```
 
-1. Docker イメージをビルド
+1. Docker 이미지 빌드
 
 ```sh
 $ make build_all
-# 実行されるコマンド
+# 실행 커맨드
 # docker build \
 # 	-t shibui/ml-system-in-actions:circuit_breaker_pattern_api_0.0.1 \
 # 	-f Dockerfile \
@@ -45,18 +45,18 @@ $ make build_all
 # 	.
 ```
 
-2. Kubernetes に Istio をインストールし、各サービスを起動
+2. Kubernetes 에 Istio 를 인스톨하고, 각 서비스 기동
 
 ```sh
 $ make deploy
-# 実行されるコマンド
+# 실행 커맨드
 # istioctl install -y
 # kubectl apply -f manifests/namespace.yml
 # kubectl apply -f manifests/
 
-# サービスの起動を確認
+# 서비스 기동 확인
 $ kubectl -n circuit-breaker get all
-# 出力
+# 출력
 # NAME                            READY   STATUS    RESTARTS   AGE
 # pod/client                      2/2     Running   0          74s
 # pod/iris-svc-56758cc7cf-6gdhb   2/2     Running   0          74s
@@ -73,19 +73,19 @@ $ kubectl -n circuit-breaker get all
 # replicaset.apps/iris-svc-56758cc7cf   3         3         3       75s
 ```
 
-3. 起動した API に負荷テスト
+3. 기동한 API 부하 테스트
 
 ```sh
-# 負荷テストクライアントに接続
+# 부하 테스트 클라이언트에 접속
 $ kubectl -n circuit-breaker exec -it pod/client bash
-# 出力
+# 출력
 # kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl kubectl exec [POD] -- [COMMAND] instead.
 # Defaulting container name to client.
 # Use 'kubectl describe pod/client -n circuit-breaker' to see all of the containers in this pod.
 
-# 負荷テストを実行
+# 부하 테스트 실행
 $ vegeta attack -duration=10s -rate=1000 -targets=vegeta/post-target | vegeta report -type=text
-# 出力
+# 출력
 # Requests      [total, rate, throughput]         10000, 1000.04, 764.34
 # Duration      [total, attack, wait]             10.242s, 10s, 241.972ms
 # Latencies     [min, mean, 50, 90, 95, 99, max]  362.662µs, 177.282ms, 90.438ms, 427.767ms, 672.361ms, 1.419s, 2.929s
@@ -97,7 +97,7 @@ $ vegeta attack -duration=10s -rate=1000 -targets=vegeta/post-target | vegeta re
 # 503 Service Unavailable
 ```
 
-4. Kubernetes からサービスを削除
+4. Kubernetes 에서 서비스 삭제
 
 ```sh
 $ kubectl delete ns circuit-breaker

@@ -1,36 +1,36 @@
-# shadow ab test pattern
+# 섀도우 A/B 테스트 패턴
 
-## 目的
+## 목적
 
-シャドウで A/B テストを実施します。
+섀도우로 A/B 테스트를 실시합니다.
 
-## 前提
+## 전제
 
-- Python 3.8 以上
+- Python 3.8 이상
 - Docker
-- Kubernetes クラスターまたは minikube
+- Kubernetes 클러스터 또는 minikube
 
-本プログラムでは Kubernetes クラスターまたは minikube が必要になります。
-Kubernetes クラスターは独自に構築するか、各クラウドのマネージドサービス（GCP GKE、AWS EKS、MS Azure AKS 等）をご利用ください。
-なお、作者は GCP GKE クラスターで稼働確認を取っております。
+이 프로그램은 Kubernetes 클러스터 또는 minikube 가 필요합니다.
+Kubernetes 클러스터는 독자적으로 구축하거나, 각 클라우드 매니지드 서비스（GCP GKE、AWS EKS、MS Azure AKS 等）를 이용해 주십시오.
+GCP GKE 클러스터로 가동을 확인했습니다.
 
-- [Kubernetes クラスター構築](https://kubernetes.io/ja/docs/setup/)
+- [Kubernetes 클러스터 구축](https://kubernetes.io/ja/docs/setup/)
 - [minikube](https://kubernetes.io/ja/docs/setup/learning-environment/minikube/)
 
-## 使い方
+## 사용법
 
-0. カレントディレクトリ
+0. 현재 디렉토리
 
 ```sh
 $ pwd
 ~/ml-system-in-actions/chapter6_operation_management/shadow_ab_pattern
 ```
 
-1. Docker イメージをビルド
+1. Docker 이미지 빌드
 
 ```sh
 $ make build_all
-# 実行されるコマンド
+# 실행 커맨드
 # docker build \
 # 	-t shibui/ml-system-in-actions:shadow_ab_pattern_api_0.0.1 \
 # 	-f Dockerfile \
@@ -45,18 +45,18 @@ $ make build_all
 # 	.
 ```
 
-2. Kubernetes でサービスを起動
+2. Kubernetes 로 서비스 기동
 
 ```sh
 $ make deploy
-# 実行されるコマンド
+# 실행 커맨드
 # istioctl install -y
 # kubectl apply -f manifests/namespace.yml
 # kubectl apply -f manifests/
 
-# 稼働確認
+# 가동확인
 $ kubectl -n shadow-ab get all
-# 出力
+# 출력
 # NAME                            READY   STATUS    RESTARTS   AGE
 # pod/client                      2/2     Running   0          44s
 # pod/iris-rf-7cd8cb9d78-lcsq6    2/2     Running   0          43s
@@ -78,13 +78,13 @@ $ kubectl -n shadow-ab get all
 # horizontalpodautoscaler.autoscaling/iris-svc   Deployment/iris-svc   <unknown>/70%   3         10        3          43s
 ```
 
-3. 起動した API にリクエスト
+3. 기동한 API 에 요청
 
 ```sh
-# クライアントに接続
+# 클라이언트에 접속
 $ kubectl -n shadow-ab exec -it pod/client bash
 
-# 同じエンドポイントに複数回リクエストを送ります。
+# 같은 엔드포인트에서 여러번 요청을 보냄
 $ curl http://iris.shadow-ab.svc.cluster.local:8000/predict-test/000000
 # {"job_id":"000000","prediction":[0.9709315896034241,0.015583082102239132,0.013485366478562355]}
 $ curl http://iris.shadow-ab.svc.cluster.local:8000/predict-test/000000
@@ -96,23 +96,23 @@ $ curl http://iris.shadow-ab.svc.cluster.local:8000/predict-test/000000
 $ curl http://iris.shadow-ab.svc.cluster.local:8000/predict-test/000000
 # {"job_id":"000000","prediction":[0.9709315896034241,0.015583082102239132,0.013485366478562355]}
 
-# クライアントをエクジットして、iris-rfおよびiris-svcのログを参照します。iris-rf、iris-svc両方で推論が実行されていることがわかります。
+# 클라이언트를 exit 하고, iris-rf 및 iris-svc 로그를 참조합니다. iris-rf、iris-svc 양측에서 추론이 실행되었음을 확인할 수 있습니다.
 $ kubectl -n shadow-ab logs pod/iris-rf-7cd8cb9d78-lcsq6 iris-rf
-# 出力
+# 출력
 # [2021-02-06 09:51:35] [INFO] [14] [src.app.routers.routers] [_predict_test] [37] execute: [000000]
 # [2021-02-06 09:51:35] [INFO] [14] [src.ml.prediction] [predict] [50] predict proba [0.99999994 0.         0.        ]
 # [2021-02-06 09:51:35] [INFO] [14] [src.app.routers.routers] [wrapper] [33] [iris_rf.onnx] [/predict-test] [000000] [1.0628700256347656 ms] [None] [[0.9999999403953552, 0.0, 0.0]]
 # [2021-02-06 09:51:35] [INFO] [14] [uvicorn.access] [send] [458] 10.0.2.36:0 - "GET /predict-test/000000 HTTP/1.1" 200
 
 $ kubectl -n shadow-ab logs pod/iris-svc-74dc7654b8-xthmh iris-svc
-# 出力
+# 출력
 # [2021-02-06 09:51:35] [INFO] [8] [src.app.routers.routers] [_predict_test] [37] execute: [000000]
 # [2021-02-06 09:51:35] [INFO] [8] [src.ml.prediction] [predict] [50] predict proba [0.97093159 0.01558308 0.01348537]
 # [2021-02-06 09:51:35] [INFO] [8] [src.app.routers.routers] [wrapper] [33] [iris_svc.onnx] [/predict-test] [000000] [0.8084774017333984 ms] [None] [[0.9709315896034241, 0.015583082102239132, 0.013485366478562355]]
 # [2021-02-06 09:51:35] [INFO] [8] [uvicorn.access] [send] [458] 127.0.0.1:48148 - "GET /predict-test/000000 HTTP/1.1" 200
 ```
 
-4. Kubernetes からサービスを削除
+4. Kubernetes 에서 서비스 삭제
 
 ```sh
 $ kubectl delete ns shadow-ab

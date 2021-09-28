@@ -1,29 +1,29 @@
-# prediction monitoring pattern
+# 추론 감시 패턴
 
-## 目的
+## 목적
 
-推論のログを監視します。
+추론 로그를 감시합니다.
 
-## 前提
+## 전제
 
-- Python 3.8 以上
+- Python 3.8 이상
 - Docker
 - Docker compose
 
-## 使い方
+## 사용법
 
-0. カレントディレクトリ
+0. 현재 디렉토리
 
 ```sh
 $ pwd
 ~/ml-system-in-actions/chapter5_operations/prediction_monitoring_pattern
 ```
 
-1. Docker イメージをビルド
+1. Docker 이미지 빌드
 
 ```sh
 $ make build_all
-# 実行されるコマンド
+# 실행 커맨드
 # docker build \
 #     -t shibui/ml-system-in-actions:prediction_monitoring_pattern_api_0.0.1 \
 #     -f Dockerfile.api \
@@ -34,29 +34,29 @@ $ make build_all
 #     .
 ```
 
-2. Docker compose で各サービスを起動
+2. Docker compose 로 각 서비스 기동
 
 ```sh
 $ make c_up
-# 実行されるコマンド
+# 실행 커맨드
 # docker-compose \
 #     -f ./docker-compose.yml \
 #     up -d
 ```
 
-3. 起動した API にリクエスト
+3. 기동한 API 에 요청
 
 ```sh
-# ヘルスチェック
+# 헬스 체크
 $ curl localhost:8000/health
-# 出力
+# 출력
 # {
 #   "health":"ok"
 # }
 
-# メタデータ
+# 메타 데이터
 $ curl localhost:8000/metadata
-# 出力
+# 출력
 # {
 #   "data_type": "float32",
 #   "data_structure": "(1,4)",
@@ -84,9 +84,9 @@ $ curl localhost:8000/metadata
 # }
 
 
-# ラベル一覧
+# 라벨 목록
 $ curl localhost:8000/label
-# 出力
+# 출력
 # {
 #   "0": "setosa",
 #   "1": "versicolor",
@@ -94,9 +94,9 @@ $ curl localhost:8000/label
 # }
 
 
-# テストデータで推論リクエスト
+# 테스트 데이터로 추론 요청
 $ curl localhost:8000/predict/test
-# 出力
+# 출력
 # {
 #   "job_id": "3315b9",
 #   "prediction": [
@@ -109,13 +109,13 @@ $ curl localhost:8000/predict/test
 # }
 
 
-# 画像をリクエスト
+# 이미지 요청
 $ curl \
     -X POST \
     -H "Content-Type: application/json" \
     -d '{"data": [[1.0, 2.0, 3.0, 4.0]]}' \
     localhost:8000/predict
-# 出力
+# 출력
 # {
 #   "job_id": "dc138f",
 #   "prediction": [
@@ -129,9 +129,9 @@ $ curl \
 #   "outlier_elapsed": 0.2186298370361328
 # }
 
-# ログの確認
+# 로그 확인
 $ docker logs monitor
-# 出力
+# 출력
 # [2021-02-06 08:44:00,119] [1] [__main__] [INFO] start monitoring...
 # [2021-02-06 08:44:00,120] [1] [__main__] [INFO] time between 2021-02-06 08:42:00 and 2021-02-06 08:44:00
 # [2021-02-06 08:44:00,272] [1] [__main__] [INFO] prediction_logs between 2021-02-06 08:42:00 and 2021-02-06 08:44:00: 0
@@ -162,11 +162,11 @@ $ docker logs monitor
 # [2021-02-06 08:46:00,326] [1] [__main__] [INFO] done evaluating outliers
 ```
 
-4. Docker compose を停止
+4. Docker compose 정지
 
 ```sh
 $ make c_down
-# 実行されるコマンド
+# 실행 커맨드
 # docker-compose \
 #     -f ./docker-compose.yml \
 #     down

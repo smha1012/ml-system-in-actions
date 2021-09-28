@@ -1,29 +1,29 @@
-# sync async pattern
+# 시간차 추론 패턴
 
-## 目的
+## 목적
 
-同期的な推論器と非同期な推論器を組み合わせることで複数の推論の遅延差を補助します。
+동기적 추론기와 비동기적 추론기를 조합해 여러 추론의 지연을 보조합니다.
 
-## 前提
+## 전제
 
-- Python 3.8 以上
+- Python 3.8 이상
 - Docker
 - Docker compose
 
-## 使い方
+## 사용법
 
-0. カレントディレクトリ
+0. 현재 디렉토리
 
 ```sh
 $ pwd
 ~/ml-system-in-actions/chapter4_serving_patterns/sync_async_pattern
 ```
 
-1. Docker イメージをビルド
+1. Docker 이미지 빌드
 
 ```sh
 $ make build_all
-# 実行されるコマンド
+# 실행 커맨드
 # docker build \
 #     -t shibui/ml-system-in-actions:sync_async_pattern_sync_async_proxy_0.0.1 \
 #     -f ./Dockerfile.proxy .
@@ -38,38 +38,38 @@ $ make build_all
 #     -f ./Dockerfile.backend .
 ```
 
-2. Docker compose で各サービスを起動
+2. Docker compose 로 각 서비스 기동
 
 ```sh
 $ make c_up
-# 実行されるコマンド
+# 실행 커맨드
 # docker-compose \
 #     -f ./docker-compose.yml \
 #     up -d
 ```
 
-3. 起動した API にリクエスト
+3. 기동한 API 에 요청
 
 ```sh
-# ヘルスチェック
+# 헬스 체크
 $ curl localhost:8000/health
-# 出力
+# 출력
 # {
 #   "health":"ok"
 # }
 
-# バックエンドのヘルスチェック
+# 백엔드 헬스체크
 $ curl localhost:8000/health/all
-# 出力
+# 출력
 # {
 #   "mobilenet_v2": "ok",
 #   "inception_v3": "ok"
 # }
 
 
-# メタデータ
+# 메타 데이터
 $ curl localhost:8000/metadata
-# 出力
+# 출력
 # {
 #   "data_type": "str",
 #   "data_structure": "(1,1)",
@@ -80,31 +80,31 @@ $ curl localhost:8000/metadata
 # }
 
 
-# テストデータで推論リクエスト
+# 테스트 데이터로 추론 요청
 $ curl localhost:8000/predict/test
-# 出力
+# 출력
 # {
 #   "job_id": "6195b8",
 #   "mobilenet_v2": "Persian cat"
 # }
 
 
-# 画像をリクエスト
+# 이미지 요청
 $ (echo -n '{"image_data": "'; base64 data/cat.jpg; echo '"}') | \
     curl \
     -X POST \
     -H "Content-Type: application/json" \
     -d @- \
     localhost:8000/predict
-# 出力
+# 출력
 # {
 #   "job_id": "9e987f",
 #   "mobilenet_v2": "Persian cat"
 # }
 
-# 画像リクエストのジョブIDから推論結果をリクエスト
+# 이미지 요청의 작업 ID 로부터 추론결과를 요청
 $ curl localhost:8000/job/2f49aa
-# 出力
+# 출력
 # {
 #   "6195b8": {
 #     "prediction": "Siamese cat"
@@ -112,11 +112,11 @@ $ curl localhost:8000/job/2f49aa
 # }
 ```
 
-4. Docker compose を停止
+4. Docker compose 정지
 
 ```sh
 $ make c_down
-# 実行されるコマンド
+# 실행 커맨드
 # docker-compose \
 #     -f ./docker-compose.yml \
 #     down

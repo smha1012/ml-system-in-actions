@@ -1,29 +1,29 @@
-# asynchronous pattern
+# 비동기 추론 패턴
 
-## 目的
+## 목적
 
-非同期推論の API を提供します。
+비동기 추론 API 를 제공합니다.
 
-## 前提
+## 전제
 
-- Python 3.8 以上
+- Python 3.8 이상
 - Docker
 - Docker compose
 
-## 使い方
+## 사용법
 
-0. カレントディレクトリ
+0. 현재 디렉토리
 
 ```sh
 $ pwd
 ~/ml-system-in-actions/chapter4_serving_patterns/asynchronous_pattern
 ```
 
-1. 非同期推論のための Docker イメージをビルド
+1. 비동기 추론을 위한 Docker 이미지 빌드
 
 ```sh
 $ make build_all
-# 実行されるコマンド
+# 실행 커맨드
 # docker build \
 #     -t shibui/ml-system-in-actions:asynchronous_pattern_asynchronous_proxy_0.0.1 \
 #     -f ./Dockerfile.proxy .
@@ -35,27 +35,27 @@ $ make build_all
 #     -f ./Dockerfile.backend .
 ```
 
-2. Docker compose で各サービスを起動
+2. Docker compose 로 각 서비스 기동
 
 ```sh
 $ make c_up
-# 実行されるコマンド
+# 실행 커맨드
 # docker-compose \
 #     -f ./docker-compose.yml \
 #     up -d
 ```
 
-3. 起動した API にリクエスト
+3. 기동한 API 에 요청
 
 ```sh
-# ヘルスチェック
+# 헬스 체크
 $ curl localhost:8000/health
-# 出力
+# 출력
 # {"health":"ok"}
 
-# メタデータ
+# 메타 데이터
 $ curl localhost:8000/metadata
-# 出力
+# 출력
 # {
 #   "model_spec": {
 #     "name": "inception_v3",
@@ -112,9 +112,9 @@ $ curl localhost:8000/metadata
 #   }
 # }
 
-# ラベル一覧
+# 라벨 목록
 $ curl localhost:8000/label
-# 出力
+# 출력
 # [
 #   "background",
 #   "tench",
@@ -125,15 +125,15 @@ $ curl localhost:8000/label
 #   "toilet tissue"
 # ]
 
-# テストデータで推論リクエスト
+# 테스트 데이터로 추론 요청
 $ curl localhost:8000/predict/test
-# 出力
+# 출력
 # {
 #   "job_id": "f22689"
 # }
 
 
-# 画像をリクエスト
+# 이미지를 요청
 $ (echo \
     -n '{"image_data": "'; \
     base64 imagenet_inception_v3/data/cat.jpg; \
@@ -143,14 +143,14 @@ $ (echo \
     -H "Content-Type: application/json" \
     -d @- \
     localhost:8000/predict
-# 出力
+# 출력
 # {
 #   "job_id":"2f49aa"
 # }
 
-# 画像リクエストのジョブIDから推論結果をリクエスト
+# 이미지 요청의 작업 ID 로부터 추론 결과를 요청
 $ curl localhost:8000/job/2f49aa
-# 出力
+# 출력
 # {
 #   "2f49aa": {
 #     "prediction": "Siamese cat"
@@ -158,11 +158,11 @@ $ curl localhost:8000/job/2f49aa
 # }
 ```
 
-4. Docker compose を停止
+4. Docker compose 정지
 
 ```sh
 $ make c_down
-# 実行されるコマンド
+# 실행 커맨드
 # docker-compose \
 #     -f ./docker-compose.yml \
 #     down

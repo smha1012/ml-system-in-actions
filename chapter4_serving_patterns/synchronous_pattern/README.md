@@ -1,38 +1,38 @@
-# synchronous prediction pattern
+# 동기 추론 패턴
 
-## 目的
+## 목적
 
 リクエストに対して同期的に推論しレスポンスします。
 
-## 前提
+## 전제
 
-- Python 3.8 以上
+- Python 3.8 이상
 - Docker
 
-## 使い方
+## 사용법
 
-0. カレントディレクトリ
+0. 현재 디렉토리
 
 ```sh
 $ pwd
 ~/ml-system-in-actions/chapter4_serving_patterns/synchronous_pattern
 ```
 
-1. Docker イメージをビルド
+1. Docker 이미지 빌드
 
 ```sh
 $ make build_all
-# 実行されるコマンド
+# 실행 커맨드
 # docker build \
 #     -t shibui/ml-system-in-actions:synchronous_pattern_imagenet_inception_v3_0.0.1 \
 #     -f imagenet_inception_v3/Dockerfile .
 ```
 
-2. Docker コンテナでサービスを起動
+2. Docker 컨테이너 서비스 기동
 
 ```sh
 $ make run
-# 実行されるコマンド
+# 실행 커맨드
 # docker run \
 #     -d \
 #     --name imagenet_inception_v3 \
@@ -41,12 +41,12 @@ $ make run
 #     shibui/ml-system-in-actions:synchronous_pattern_imagenet_inception_v3_0.0.1
 ```
 
-3. 起動した API にクライアントからリクエスト
+3. 기동한 API 에 클라이언트로부터 요청
 
 ```sh
-# メタデータ
+# 메타 데이터
 $ curl localhost:8501/v1/models/inception_v3/versions/0/metadata
-# 出力
+# 출력
 # {
 #   "model_spec": {
 #     "name": "inception_v3",
@@ -105,29 +105,29 @@ $ curl localhost:8501/v1/models/inception_v3/versions/0/metadata
 
 
 
-# GRPCで画像をリクエスト
+# GRPC 로 이미지 요청
 $ python \
     -m client.request_inception_v3 \
     --image_file ./cat.jpg \
     --format grpc
-# 出力
+# 출력
 # Siamese cat
 
 
-# RESTで画像をリクエスト
+# REST 로 이미지 요청
 $ python \
     -m client.request_inception_v3 \
     --image_file ./cat.jpg \
     --format rest
-# 出力
+# 출력
 # Siamese cat
 ```
 
-4. Docker コンテナを停止
+4. Docker 컨테이너 정지
 
 ```sh
 $ make stop
-# 実行されるコマンド
+# 실행 커맨드
 # docker rm \
 #   -f imagenet_inception_v3
 ```

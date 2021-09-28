@@ -1,36 +1,36 @@
-# prediction log pattern
+# 추론 로그 패턴
 
-## 目的
+## 목적
 
-推論のログを記録します。
+추론 로그를 기록합니다.
 
-## 前提
+## 전제
 
-- Python 3.8 以上
+- Python 3.8 이상
 - Docker
-- Kubernetes クラスターまたは minikube
+- Kubernetes 클러스터 또는 minikube
 
-本プログラムでは Kubernetes クラスターまたは minikube が必要になります。
-Kubernetes クラスターは独自に構築するか、各クラウドのマネージドサービス（GCP GKE、AWS EKS、MS Azure AKS 等）をご利用ください。
-なお、作者は GCP GKE クラスターで稼働確認を取っております。
+이 프로그램은 Kubernetes 클러스터 또는 minikube 가 필요합니다.
+Kubernetes 클러스터는 독자적으로 구축하거나, 각 클라우드 매니지드 서비스（GCP GKE、AWS EKS、MS Azure AKS 等）를 이용해 주십시오.
+GCP GKE 클러스터로 가동을 확인했습니다.
 
-- [Kubernetes クラスター構築](https://kubernetes.io/ja/docs/setup/)
+- [Kubernetes 클러스터 구축](https://kubernetes.io/ja/docs/setup/)
 - [minikube](https://kubernetes.io/ja/docs/setup/learning-environment/minikube/)
 
-## 使い方
+## 사용법
 
-0. カレントディレクトリ
+0. 현재 디렉토리
 
 ```sh
 $ pwd
 ~/ml-system-in-actions/chapter5_operations/prediction_log_pattern
 ```
 
-1. Docker イメージをビルド
+1. Docker 이미지 빌드
 
 ```sh
 $ make build_all
-# 実行されるコマンド
+# 실행 커맨드
 # docker build \
 #     -t shibui/ml-system-in-actions:prediction_log_pattern_api_0.0.1 \
 #     -f Dockerfile.api \
@@ -41,17 +41,17 @@ $ make build_all
 #     .
 ```
 
-2. Kubernetes で各サービスを起動
+2. Kubernetes 로 각 서비스 기동
 
 ```sh
 $ make deploy
-# 実行されるコマンド
+# 실행 커맨드
 # kubectl apply -f manifests/namespace.yml
 # kubectl apply -f manifests/
 
-# デプロイメント確認
+# 디플로이먼트 확인
 $ kubectl -n prediction-log get all
-# 出力
+# 출력
 # NAME                       READY   STATUS    RESTARTS   AGE
 # pod/api-85d44df447-2v95h   2/2     Running   0          67s
 # pod/api-85d44df447-2xhrn   2/2     Running   0          67s
@@ -68,22 +68,22 @@ $ kubectl -n prediction-log get all
 # replicaset.apps/api-85d44df447   3         3         3       67s
 ```
 
-3. 起動した API にリクエスト
+3. 기동한 API 에 요청
 
 ```sh
-# 起動したservice/apiにポートフォワード
+# 기동한 service/api 에 포트 포워딩
 $ kubectl -n prediction-log port-forward service/api 8000:8000 &
 
-# ヘルスチェック
+# 헬스 체크
 $ curl localhost:8000/health
-# 出力
+# 출력
 # {
 #   "health":"ok"
 # }
 
-# メタデータ
+# 메타 데이터
 $ curl localhost:8000/metadata
-# 出力
+# 출력
 # {
 #   "data_type": "float32",
 #   "data_structure": "(1,4)",
@@ -111,9 +111,9 @@ $ curl localhost:8000/metadata
 # }
 
 
-# ラベル一覧
+# 라벨 목록
 $ curl localhost:8000/label
-# 出力
+# 출력
 # {
 #   "0": "setosa",
 #   "1": "versicolor",
@@ -121,9 +121,9 @@ $ curl localhost:8000/label
 # }
 
 
-# テストデータで推論リクエスト
+# 테스트 데이터로 추론 요청
 $ curl localhost:8000/predict/test
-# 出力
+# 출력
 # {
 #   "job_id": "ee1b0d",
 #   "prediction": [
@@ -136,13 +136,13 @@ $ curl localhost:8000/predict/test
 # }
 
 
-# 推論をリクエスト
+# 추론 요청
 $ curl \
     -X POST \
     -H "Content-Type: application/json" \
     -d '{"data": [[6.7, 3.0,  5.2, 2.3]]}' \
     localhost:8000/predict
-# 出力
+# 출력
 # {
 #   "job_id": "1934ee",
 #   "prediction": [
@@ -154,9 +154,9 @@ $ curl \
 #   "outlier_score": 0.44043588638305664
 # }
 
-# ログを確認
+# 로그 확인
 $ kubectl -n prediction-log logs deployment.apps/api api
-# 出力
+# 출력
 # [2021-02-06 08:39:49] [INFO] [10] [src.app.routers.routers] [_predict] [81] execute: [d7a0a7]
 # [2021-02-06 08:39:49] [INFO] [10] [src.ml.prediction] [predict] [47] predict proba [0.00979372 0.00987771 0.98032862]
 # [2021-02-06 08:39:49] [INFO] [10] [src.ml.outlier_detection] [predict] [38] outlier score 0.44043588638305664
@@ -164,10 +164,10 @@ $ kubectl -n prediction-log logs deployment.apps/api api
 # [2021-02-06 08:39:49] [INFO] [10] [uvicorn.access] [send] [458] 127.0.0.1:33446 - "POST /predict HTTP/1.1" 200
 ```
 
-4. サービスを削除
+4. 서비스 삭제
 
 ```sh
 $ kubectl delete ns prediction-log
-# 出力
+# 출력
 # namespace "prediction-log" deleted
 ```

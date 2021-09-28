@@ -1,40 +1,40 @@
-# template pattern
+# 추론기 템플릿 패턴
 
-## 目的
+## 목적
 
-推論器に必要なリソースをディレクトリ構成と jinja2 テンプレートで提供します。
+추론기에 필요한 리소스를 디렉토리 구성과 jinja2 템플릿으로 제공합니다.
 
-## 前提
+## 전제
 
-- Python 3.8 以上
+- Python 3.8 이상
 
-## 使い方
+## 사용법
 
-0. カレントディレクトリ
+0. 현재 디렉토리
 
 ```sh
 $ pwd
 ~/ml-system-in-actions/chapter4_serving_patterns/template_pattern
 ```
 
-1. ライブラリのインストール
+1. 라이브러리 인스톨
 
 ```sh
 $ pip install -r requirements.txt
 ```
 
-2. テンプレートからサンプルの推論機をビルド
+2. 템플릿으로 샘플 추론기를 빌드
 
-推論器のテンプレートは以下のディレクトリ、ファイル構成となっています。
+추론기 템플릿은 다음의 디렉토리, 파일 구성으로 되어있습니다.
 
-- template: テンプレートとなるディレクトリ
-- template_files: 変数の変換が必要なファイル一式
-- correspond_file_path.yaml: template_files 配下のファイルを変換後に配置するファイルパスを指定
-- vars.yaml: 変数
-- builder.py: テンプレートから推論器プロジェクトを作成するスクリプト
+- template: 템플릿 디렉토리 
+- template_files: 변수의 변환이 필요한 파일들
+- correspond_file_path.yaml: template_files 의 파일의 변환 후에 배치될 경로를 지정 
+- vars.yaml: 변수
+- builder.py: 템플릿으로 추론기 프로젝트를 작성하는 스크립트
 
 ```sh
-# テンプレートとなるファイル一覧と変換後のファイルパス
+# 템플릿 파일 목록과 변환 후의 파일 경로
 $ cat correspond_file_path.yaml
 # Dockerfile.j2: "{}/Dockerfile"
 # prediction.py.j2: "{}/src/ml/prediction.py"
@@ -44,7 +44,7 @@ $ cat correspond_file_path.yaml
 # makefile.j2: "{}/makefile"
 # docker-compose.yml.j2: "{}/docker-compose.yml"
 
-# 変数
+# 변수
 $ cat vars.yaml
 # name: sample
 # model_file_name: iris_svc.onnx
@@ -56,20 +56,20 @@ $ cat vars.yaml
 # prediction_structure: (1,3)
 # prediction_sample: [0.97093159, 0.01558308, 0.01348537]
 
-# 推論器プロジェクトをビルド
+# 추론기 프로젝트 빌드
 $ python \
     -m builder \
     --name sample \
     --variable_file vars.yaml \
     --correspond_file_path correspond_file_path.yaml
 
-# これで./sampleディレクトリ配下に推論器のプログラムが出来上がります。
+# 이것으로 ./sample 디렉토리 이하 추론기 프로그램이 완성됩니다.
 ```
 
-3. サンプル推論器プロジェクトの確認
+3. 샘플 추론기 프로젝트 확인
 
-作成されたプログラムは以下のような構成になっています。
-モデルとラベルファイルを `sample/models/` ディレクトリに配置すれば完成です。
+작성된 프로그램은 다음과 같은 구성으로 되어있습니다.
+모델과 라벨 파일을 `sample/models/` 디렉토리에 배치하면 완성입니다.
 
 ```sh
 $ tree sample

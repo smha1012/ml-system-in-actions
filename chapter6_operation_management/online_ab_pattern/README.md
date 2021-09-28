@@ -1,36 +1,36 @@
-# online ab test pattern
+# 온라인 A/B 테스트 패턴
 
-## 目的
+## 목적
 
-オンラインで A/B テストを実施します。
+온라인으로 A/B 테스트를 실시합니다.
 
-## 前提
+## 전제
 
-- Python 3.8 以上
+- Python 3.8 이상
 - Docker
-- Kubernetes クラスターまたは minikube
+- Kubernetes 클러스터 또는 minikube
 
-本プログラムでは Kubernetes クラスターまたは minikube が必要になります。
-Kubernetes クラスターは独自に構築するか、各クラウドのマネージドサービス（GCP GKE、AWS EKS、MS Azure AKS 等）をご利用ください。
-なお、作者は GCP GKE クラスターで稼働確認を取っております。
+이 프로그램은 Kubernetes 클러스터 또는 minikube 가 필요합니다.
+Kubernetes 클러스터는 독자적으로 구축하거나, 각 클라우드 매니지드 서비스（GCP GKE、AWS EKS、MS Azure AKS 等）를 이용해 주십시오.
+GCP GKE 클러스터로 가동을 확인했습니다.
 
-- [Kubernetes クラスター構築](https://kubernetes.io/ja/docs/setup/)
+- [Kubernetes 클러스터 구축](https://kubernetes.io/ja/docs/setup/)
 - [minikube](https://kubernetes.io/ja/docs/setup/learning-environment/minikube/)
 
-## 使い方
+## 사용법
 
-0. カレントディレクトリ
+0. 현재 디렉토리
 
 ```sh
 $ pwd
 ~/ml-system-in-actions/chapter6_operation_management/online_ab_pattern
 ```
 
-1. Docker イメージをビルド
+1. Docker 이미지 빌드
 
 ```sh
 $ make build_all
-# 実行されるコマンド
+# 실행 커맨드
 # docker build \
 # 	-t shibui/ml-system-in-actions:online_ab_pattern_api_0.0.1 \
 # 	-f Dockerfile \
@@ -45,18 +45,18 @@ $ make build_all
 # 	.
 ```
 
-2. Kubernetes でサービスを起動
+2. Kubernetes 로 서비스 기동
 
 ```sh
 $ make deploy
-# 実行されるコマンド
+# 실행 커맨드
 # istioctl install -y
 # kubectl apply -f manifests/namespace.yml
 # kubectl apply -f manifests/
 
-# 稼働確認
+# 가동확인
 $ kubectl -n online-ab get all
-# 出力
+# 출력
 # NAME                            READY   STATUS    RESTARTS   AGE
 # pod/client                      2/2     Running   0          70s
 # pod/iris-rf-f9b9d8b98-5rpms     2/2     Running   0          70s
@@ -82,13 +82,13 @@ $ kubectl -n online-ab get all
 # horizontalpodautoscaler.autoscaling/iris-svc   Deployment/iris-svc   <unknown>/70%   3         10        3          70s
 ```
 
-3. 起動した API にリクエスト
+3. 기동한 API 에 요청
 
 ```sh
-# クライアントに接続
+# 클라이언트에 접속
 $ kubectl -n online-ab exec -it pod/client bash
 
-# 同じエンドポイントに複数回リクエストを送り、2種類のレスポンスが得られることを確認
+# 같은 엔드포인트에 여러번 요청을 보내, 두 종류의 응답을 얻는지 확인
 $ curl http://iris.online-ab.svc.cluster.local:8000/predict/test
 # {"prediction":[0.9709315896034241,0.015583082102239132,0.013485366478562355],"mode":"iris_svc.onnx"}
 $ curl http://iris.online-ab.svc.cluster.local:8000/predict/test
@@ -105,7 +105,7 @@ $ curl http://iris.online-ab.svc.cluster.local:8000/predict/test
 # {"prediction":[0.9999999403953552,0.0,0.0],"mode":"iris_rf.onnx"}
 ```
 
-4. Kubernetes からサービスを削除
+4. Kubernetes 에서 서비스 삭제
 
 ```sh
 $ kubectl delete ns online-ab

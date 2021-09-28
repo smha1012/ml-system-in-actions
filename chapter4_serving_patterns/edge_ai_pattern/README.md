@@ -1,41 +1,41 @@
-# TFLitePyTorch
+# Edge AI 패턴 - TFLite / PyTorch Mobile
 
 [![](http://img.youtube.com/vi/3XOwdP7Mv2Y/0.jpg)](http://www.youtube.com/watch?v=3XOwdP7Mv2Y)
 
-## 目的
+## 목적
 
-TensorflowLite および Pytorch Mobile の画像認識モデルを使い、Android でカメラに映る被写体を分類するアプリケーションを動かします。
+TensorflowLite 또는 Pytorch Mobile 로 이미지 인식 모델을 사용해, Android 에서 카메라에 찍힌 피사체를 분류하는 애플리케이션을 동작합니다.
 
-## 前提
+## 전제
 
 - Android
-- Android 端末
+- Android 단말
 
-Android Studio は以下より入手してください。
+Android Studio 는 아래를 참조해 주십시오.
 
 - [Android Studio](https://developer.android.com/studio/install)
 
-# 使い方
+# 사용법
 
-1. Android Studio を起動し、本ディレクトリを読み込みます。
+1. Android Studio 를 기동하고, 본 디렉토리를 읽어옵니다.
 
-Android Studio 起動画面。
+Android Studio 기동화면
 ![img](./img/start.png)
 
-ディレクトリの選択
+디렉토리 선택
 
 ![img](./img/files.png)
 
-2. アプリケーションのインストール
+2. 애플리케이션 인스톨
 
-Android Studio からアプリケーションを選択すると以下のような画面になります。
+Android Studio 에서 애플리케이션을 선택하면 아래와 같은 화면이 나타납니다.
 
 ![img](./img/install.png)
 
-Android スマホを端末に接続します。
-上部のエミュレータ環境で Android スマホが認識されます。
-プレイボタン（▶）を押下し、アプリケーションを Android にインストールします。
+Android 스마트폰을 단말에 접속합니다. 
+상부의 에뮬레이터 환경에서 Android 스마트폰이 인식됩니다.
+플레이 버튼（▶）을 눌러, 애플리케이션을 Android 에 인스톨합니다.
 
-3. アプリケーションを使う
+3. 애플리케이션 사용하기
 
 ![img](./img/edge_ai.png)

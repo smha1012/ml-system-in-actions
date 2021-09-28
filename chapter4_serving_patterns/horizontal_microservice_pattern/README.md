@@ -1,29 +1,29 @@
-# horizontal microservice pattern
+# 병렬 마이크로서비스 패턴
 
-## 目的
+## 목적
 
-推論器をマイクロサービスとして並列に配置します。
+추론기를 병렬 마이크로서비스로 배치합니다.
 
-## 前提
+## 전제
 
-- Python 3.8 以上
+- Python 3.8 이상
 - Docker
 - Docker compose
 
-## 使い方
+## 사용법
 
-0. カレントディレクトリ
+0. 현재 디렉토리
 
 ```sh
 $ pwd
 ~/ml-system-in-actions/chapter4_serving_patterns/horizontal_microservice_pattern
 ```
 
-1. Docker イメージをビルド
+1. Docker 이미지 빌드
 
 ```sh
 $ make build_all
-# 実行されるコマンド
+# 실행 커맨드
 # docker build \
 #     -t shibui/ml-system-in-actions:horizontal_microservice_pattern_setosa_0.0.1 \
 #     -f ./Dockerfile.service.setosa \
@@ -42,27 +42,27 @@ $ make build_all
 #     .
 ```
 
-2. Docker compose で各サービスを起動
+2. Docker compose 로 각 서비스 기동
 
 ```sh
 $ make c_up
-# 実行されるコマンド
+# 실행 커맨드
 # docker-compose \
 #     -f ./docker-compose.yml \
 #     up -d
 ```
 
-3. 起動した API にリクエスト
+3. 기동한 API 에 요청
 
 ```sh
-# proxyにヘルスチェック
+# proxy에 헬스 체크
 $ curl localhost:9000/health
-# 出力
+# 출력
 # {"health":"ok"}
 
-# 推論器にヘルスチェック
+# 추론기에 헬스 체크
 $ curl localhost:9000/health/all
-# 出力
+# 출력
 # {
 #   "setosa": {
 #     "health": "ok"
@@ -75,9 +75,9 @@ $ curl localhost:9000/health/all
 #   }
 # }
 
-# メタデータ
+# 메타 데이터
 $ curl localhost:9000/metadata
-# 出力
+# 출력
 # {
 #   "data_type": "float32",
 #   "data_structure": "(1,4)",
@@ -107,9 +107,9 @@ $ curl localhost:9000/metadata
 #   }
 # }
 
-# テストデータで推論リクエスト(GET)
+# 테스트 데이터로 추론 요청(GET)
 $ curl localhost:9000/predict/get/test
-# 出力
+# 출력
 # {
 #   "setosa": {
 #     "prediction": [
@@ -131,9 +131,9 @@ $ curl localhost:9000/predict/get/test
 #   }
 # }
 
-# テストデータで推論リクエスト(POST)
+# 테스트 데이터로 추론 요청(POST)
 $ curl localhost:9000/predict/post/test
-# 出力
+# 출력
 # {
 #   "setosa": {
 #     "prediction": [
@@ -156,13 +156,13 @@ $ curl localhost:9000/predict/post/test
 # }
 
 
-# POSTリクエスト
+# POST 요청
 $ curl \
     -X POST \
     -H "Content-Type: application/json" \
     -d '{"data": [[1.0, 2.0, 3.0, 4.0]]}' \
     localhost:9000/predict
-# 出力
+# 출력
 # {
 #   "setosa": {
 #     "prediction": [
@@ -184,13 +184,13 @@ $ curl \
 #   }
 # }
 
-# ラベルをリクエスト
+# 라벨을 요청
 $ curl \
     -X POST \
     -H "Content-Type: application/json" \
     -d '{"data": [[1.0, 2.0, 3.0, 4.0]]}' \
     localhost:9000/predict/label
-# 出力
+# 출력
 # {
 #   "prediction": {
 #     "proba": 0.3042130172252655,
@@ -200,11 +200,11 @@ $ curl \
 
 ```
 
-4. Docker compose を停止
+4. Docker compose 정지
 
 ```sh
 $ make c_down
-# 実行されるコマンド
+# 실행 커맨드
 # docker-compose \
 #     -f ./docker-compose.yml \
 #     down

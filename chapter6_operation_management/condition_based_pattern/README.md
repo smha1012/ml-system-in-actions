@@ -1,36 +1,36 @@
-# condition based prediction pattern
+# 조건 분기 추론 패턴
 
-## 目的
+## 목적
 
-状況によって推論のリクエスト先を変えるパターン。
+상황에 따라 추론의 요청처를 바꾸는 패턴입니다.
 
-## 前提
+## 전제
 
-- Python 3.8 以上
+- Python 3.8 이상
 - Docker
-- Kubernetes クラスターまたは minikube
+- Kubernetes 클러스터 또는 minikube
 
-本プログラムでは Kubernetes クラスターまたは minikube が必要になります。
-Kubernetes クラスターは独自に構築するか、各クラウドのマネージドサービス（GCP GKE、AWS EKS、MS Azure AKS 等）をご利用ください。
-なお、作者は GCP GKE クラスターで稼働確認を取っております。
+이 프로그램은 Kubernetes 클러스터 또는 minikube 가 필요합니다.
+Kubernetes 클러스터는 독자적으로 구축하거나, 각 클라우드 매니지드 서비스（GCP GKE、AWS EKS、MS Azure AKS 等）를 이용해 주십시오.
+GCP GKE 클러스터로 가동을 확인했습니다.
 
-- [Kubernetes クラスター構築](https://kubernetes.io/ja/docs/setup/)
+- [Kubernetes 클러스터 구축](https://kubernetes.io/ja/docs/setup/)
 - [minikube](https://kubernetes.io/ja/docs/setup/learning-environment/minikube/)
 
-## 使い方
+## 사용법
 
-0. カレントディレクトリ
+0. 현재 디렉토리
 
 ```sh
 $ pwd
 ~/ml-system-in-actions/chapter6_operation_management/condition_based_pattern
 ```
 
-1. Docker イメージをビルド
+1. Docker 이미지 빌드
 
 ```sh
 $ make build_all
-# 実行されるコマンド
+# 실행 커맨드
 # docker build \
 # 	-t shibui/ml-system-in-actions:condition_based_pattern_proxy_0.0.1 \
 # 	-f ./Dockerfile.proxy \
@@ -49,18 +49,18 @@ $ make build_all
 # 	.
 ```
 
-2. Kubernetes でサービスを起動
+2. Kubernetes 로 서비스 기동
 
 ```sh
 $ make deploy
-# 実行されるコマンド
+# 실행 커맨드
 # istioctl install -y
 # kubectl apply -f manifests/namespace.yml
 # kubectl apply -f manifests/
 
-# 稼働確認
+# 가동확인
 $ kubectl -n condition-based-serving get all
-# 出力
+# 출력
 # NAME                                     READY   STATUS    RESTARTS   AGE
 # pod/client                               2/2     Running   0          59s
 # pod/mobilenet-v2-c9dc95c89-66dn9         2/2     Running   0          58s
@@ -94,22 +94,22 @@ $ kubectl -n condition-based-serving get all
 # replicaset.apps/plant-proxy-558877db5c         3         3         2       58s
 ```
 
-3. 起動した API にリクエスト
+3. 기동한 API 에 요청
 
 ```sh
-# クライアントに接続
+# 클라이언트에 접속
 $ kubectl -n condition-based-serving exec -it pod/client bash
 
-# ヘルスチェック
+# 헬스 체크
 $ curl proxy.condition-based-serving.svc.cluster.local:8000/health
-# 出力
+# 출력
 # {
 #   "health":"ok"
 # }
 
-# メタデータ
+# 메타 데이터
 $ curl proxy.condition-based-serving.svc.cluster.local:8000/metadata
-# 出力
+# 출력
 # {
 #   "data_type": "str",
 #   "data_structure": "(1,1)",
@@ -119,9 +119,9 @@ $ curl proxy.condition-based-serving.svc.cluster.local:8000/metadata
 #   "prediction_sample": "[0.07093159, 0.01558308, 0.01348537, ...]"
 # }
 
-# ラベル一覧
+# 라벨 목록
 $ curl proxy.condition-based-serving.svc.cluster.local:8000/label
-# 出力
+# 출력
 # [
 #   "background",
 #   "tench",
@@ -133,24 +133,24 @@ $ curl proxy.condition-based-serving.svc.cluster.local:8000/label
 # ]
 
 
-# テストデータで推論リクエスト
+# 테스트 데이터로 추론 요청
 $ curl proxy.condition-based-serving.svc.cluster.local:8000/predict/test
-# 出力
+# 출력
 # "Persian cat"
 
 
-# ネコ画像をImageNet推論器にリクエスト
+# 고양이 이미지를 ImageNet 추론기로 요청
 $ (echo -n '{"image_data": "'; base64 cat.jpg; echo '"}') | \
 	curl \
 	-X POST \
 	-H "Content-Type: application/json" \
 	-d @- \
 	proxy.condition-based-serving.svc.cluster.local:8000/predict
-# 出力
+# 출력
 # "Persian cat"
 
 
-# アヤメ画像を植物推論器にリクエスト
+# 붓꽃 이미지를 식물 추론기로 요청
 $ (echo -n '{"image_data": "'; base64 iris.jpg; echo '"}') | \
 	curl \
 	-X POST \
@@ -158,11 +158,11 @@ $ (echo -n '{"image_data": "'; base64 iris.jpg; echo '"}') | \
 	-H "target: mountain" \
 	-d @- \
 	proxy.condition-based-serving.svc.cluster.local:8000/predict
-# 出力
+# 출력
 # "Iris versicolor"
 
 
-# ネコ画像を植物推論器にリクエストすると、backgroundと分類される
+# 고양이 이미지를 식물 추론기로 요청을 보내면, background 로 분류됨
 $ (echo -n '{"image_data": "'; base64 cat.jpg; echo '"}') | \
 	curl \
 	-X POST \
@@ -170,21 +170,21 @@ $ (echo -n '{"image_data": "'; base64 cat.jpg; echo '"}') | \
 	-H "target: mountain" \
 	-d @- \
 	proxy.condition-based-serving.svc.cluster.local:8000/predict
-# 出力
+# 출력
 # "background"
 
-# アヤメ画像をImageNet推論器にリクエストすると、beeと分類される
+# 붓꽃 이미지를 ImageNet 추론기로 요청을 보내면, bee 로 분류됨
 $ (echo -n '{"image_data": "'; base64 iris.jpg; echo '"}') | \
 	curl \
 	-X POST \
 	-H "Content-Type: application/json" \
 	-d @- \
 	proxy.condition-based-serving.svc.cluster.local:8000/predict
-# 出力
+# 출력
 # "bee"
 ```
 
-4. Kubernetes からサービスを削除
+4. Kubernetes 에서 서비스 삭제
 
 ```sh
 $ kubectl delete ns condition-based-serving

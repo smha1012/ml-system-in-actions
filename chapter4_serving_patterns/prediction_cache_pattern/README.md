@@ -1,29 +1,29 @@
-# prediction cache pattern
+# 추론 캐시 패턴
 
-## 目的
+## 목적
 
-推論結果をキャッシュし、推論速度を改善します。
+추론결과를 캐시해서 추론 속도를 개선합니다.
 
-## 前提
+## 전제
 
-- Python 3.8 以上
+- Python 3.8 이상
 - Docker
 - Docker compose
 
-## 使い方
+## 사용법
 
-0. カレントディレクトリ
+0. 현재 디렉토리
 
 ```sh
 $ pwd
 ~/ml-system-in-actions/chapter4_serving_patterns/prediction_cache_pattern
 ```
 
-1. ...
+1. Docker 이미지 빌드
 
 ```sh
 $ make build_all
-# 実行されるコマンド
+# 실행 커맨드
 # docker build \
 #     -t shibui/ml-system-in-actions:prediction_cache_pattern_proxy_0.0.1 \
 #     -f ./Dockerfile.proxy .
@@ -32,29 +32,29 @@ $ make build_all
 #     -f ./Dockerfile.pred .
 ```
 
-2. Docker compose で各サービスを起動
+2. Docker compose 로 각 서비스 기동
 
 ```sh
 $ make c_up
-# 実行されるコマンド
+# 실행 커맨드
 # docker-compose \
 #     -f ./docker-compose.yml \
 #     up -d
 ```
 
-3. 起動した API にリクエスト
+3. 기동한 API 에 요청
 
 ```sh
-# ヘルスチェック
+# 헬스 체크
 $ curl localhost:8000/health
-# 出力
+# 출력
 # {
 #   "health": "ok"
 # }
 
-# メタデータ
+# 메타 데이터
 $ curl localhost:8000/metadata
-# 出力
+# 출력
 # {
 #   "data_type": "str",
 #   "data_structure": "(1,1)",
@@ -64,9 +64,9 @@ $ curl localhost:8000/metadata
 #   "prediction_sample": "[0.07093159, 0.01558308, 0.01348537, ...]"
 # }
 
-# ラベル一覧
+# 라벨 목록
 $ curl localhost:8000/label
-# 出力
+# 출력
 # [
 #   "background",
 #   "tench",
@@ -77,30 +77,30 @@ $ curl localhost:8000/label
 #   "toilet tissue"
 # ]
 
-# テストデータで推論リクエスト
+# 테스트 데이터로 추론 요청
 $ curl localhost:8000/predict/test/label
-# 出力
+# 출력
 # {
 #   "prediction": "Persian cat"
 # }
 
-# 画像をリクエスト
+# 이미지 요청
 $  curl \
     -X POST \
     -H "Content-Type: application/json" \
     -d '{"data": "0000"}' \
     localhost:8000/predict/label
-# 出力
+# 출력
 # {
 #   "prediction": "Persian cat"
 # }
 ```
 
-4. Docker compose を停止
+4. Docker compose 정지
 
 ```sh
 $ make c_down
-# 実行されるコマンド
+# 실행 커맨드
 # docker-compose \
 # 		-f ./docker-compose.yml \
 # 		down
