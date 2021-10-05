@@ -5,7 +5,7 @@ machine learning system examples
 ## 개요
 
 - 본 레포지토리는 2021년 5월 쇼에이샤(翔泳社)에서 출판된『AI エンジニアのための機械学習システムデザインパターン』의 샘플 코드입니다.
-- 본 레포지토리에서는 머신러닝의 모델 학습, 리리스, 추론기 가동, 운용을 위한 코드 및 실행환경을 사례별로 제공합니다.
+- 본 레포지토리에서는 머신러닝의 모델 학습, 릴리스, 추론기 가동, 운용을 위한 코드 및 실행환경을 사례별로 제공합니다.
 - 더욱 상세한 내용은 이 책 또는 mercari/ml-system-design-pattern 을 참조하시기 바랍니다.
   - [AI エンジニアのための機械学習システムデザインパターン](https://www.amazon.co.jp/dp/B08YNMRH4J/)
   - [mercari/ml-system-design-pattern](https://github.com/mercari/ml-system-design-pattern)
